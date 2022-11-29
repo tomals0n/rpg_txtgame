@@ -11,8 +11,10 @@ WAS_DEAD = False
 # global player variables sector
 
 HP = 100
+MANA = 10
 ATTACK = 20
 DEFENCE = 10
+SPELL_DMG = 25
 
 # global enemy variables sector
 
@@ -53,6 +55,26 @@ while MENU == True:
 
 # # # # # # #
 
+
+# credits sector
+
+while CREDITS == True:
+    CREDITS = False
+    print('[📑] The game have been made by tomals0n')
+    print('[📑] Latest update: 29.11.2022 | ver: 0.1a')
+    print('[✅] Recent update: Spell - "Fireball"')
+    print('[✅] To start new game - write yes, to exit write no.')
+    while(True):
+        wanna_newgame = input('>> ')
+        if wanna_newgame.lower() == 'yes':
+            NEW_GAME = True
+            break
+        elif wanna_newgame.lower() == 'no':
+            MENU = True
+            break
+        else:
+            print('[❌] Please write correct command.')
+
 # new game sector
 
 while NEW_GAME == True:
@@ -60,25 +82,32 @@ while NEW_GAME == True:
         NEW_GAME = False
         coins = 0
         score = 0
-        to_menu = 0 # variable to break from while loops
         potions = 0
+        mana_potions = 0
         HP = 100
+        fireball_scroll = None
         print('Welcome to RPG Game...')
         player_name = input('Please enter your name here: ')
-        print(f'[❓] Hi, {player_name} nice to see you, we got a big problem.')
-        print('[❓] Firstable, my name is Sam.')
-        print('[🕵️‍♂️] Im here to kill the dragon at the on of this place...')
-        print('[🕵️‍♂️] Come here with me!')
+        print(f'[❓] Hi, {player_name} welcome.')
         print('[📑] To move forward simply write ("forward")')
         print('[📑] To move towards shop simply write ("shop")')
         while HP > 0:
             have_won = 0
+            # respawned reset
             if WAS_DEAD == 1:
                 print('You respawned... start again!')
                 score = 0
                 coins = 0
                 WAS_DEAD = 0
                 potions = 0
+                mana_potions = 0
+                fireball_scroll = None
+            # break loop to menu
+            if IS_DEAD == 1:
+                MENU = True
+                IS_DEAD = 0
+                break
+            print('') # space
             print('[✅]Current position: Outside')    
             player_choice = input('[🤴]>> ')
             random_enemy = random.choice(enemy_list)
@@ -108,20 +137,24 @@ while NEW_GAME == True:
             # game            
             if player_choice.lower() == 'forward':
                 score += 1
-                print('You went forward...')
-                print(f'Suddenly - {random_enemy} approach you!')
-                print('To attack him, simply write "attack".')
+                print('') # space
+                print('[✅] You went forward...')
+                print(f'[🔪] Suddenly - {random_enemy} approach you!')
+                print('') # space
+                print('[❓] To attack him, simply write "attack".')
 
                 while HP > 0 or ENEMY_HP > 0:
                     if have_won == 1:
                         break
                     player_attack = input('[🪓]>> ')
                     if player_attack == 'attack':
+                        print('') # space
                         print(f'[💥]You have attacked {random_enemy} for {ATTACK-(ENEMY_DEFENCE/2)} health points.')
                         ENEMY_HP = ENEMY_HP - (ATTACK-(ENEMY_DEFENCE/2))
                         print(f'[💥]{random_enemy} attacked you for {ENEMY_ATTACK-(DEFENCE/2)} health points.')
                         HP = HP - (ENEMY_ATTACK-(DEFENCE/2))
                         print(f'[STATS] HP = {HP}❤ | ENEMY_HP = {ENEMY_HP}❤')
+                        print('') # space
                         if HP <= 0 or ENEMY_HP <= 0:
                             # player dead sector
                             if HP <= 0:
@@ -138,13 +171,13 @@ while NEW_GAME == True:
                                         to_menu = 1
                                         break
                             elif ENEMY_HP <= 0:
-                                print(f'You have killed 💀{random_enemy}💀')
-                                print(f'You earned 💸{MONEY_EARN} coins.💸')
+                                print(f'[✅] You have killed 💀{random_enemy}💀')
+                                print(f'[✅] You earned 💸{MONEY_EARN} coins💸')
                                 coins += MONEY_EARN
                                 score += 1
                                 have_won = 1
                                 break
-                    # potions system        
+                    # hp potions system        
                     elif player_attack.lower() == 'potion':
                         if potions > 0:
                             if HP+20 <= 100:
@@ -161,34 +194,93 @@ while NEW_GAME == True:
                                 print('[❌] You have full HP!')
                         else:
                             print('[❌] You dont have a potion!')
-                                                                                         
+                    # mana potions system
+                    elif player_attack.lower() == 'mana':
+                        if mana_potions > 0:
+                            if MANA+10 <= 0:
+                                print('[✅] You have used a potion!')
+                                mana_potions -= 1
+                                print('[✅] Potion restored 10MP!')
+                            elif MANA+10 > 10:
+                                print('[✅] You have used a potion!')
+                                mana_potions -= 1
+                                print('[✅] Potion restored MP to maximum.')
+                                MANA = 10
+                            elif MANA == 10:
+                                print('[❌] You have full MP!')
+                        else:
+                            print('[❌] You dont have a potion!')
+                    elif player_attack.lower() == 'fireball':
+                        if fireball_scroll == True:
+                            if MANA >= 5:
+                                print('') # space
+                                print(f'[🔥] You have used fireball spell dealing {SPELL_DMG} HP!')
+                                ENEMY_HP -= SPELL_DMG
+                                MANA -= 5
+                                print(f'[💥]{random_enemy} attacked you for {ENEMY_ATTACK-(DEFENCE/2)} health points.')
+                                HP = HP - (ENEMY_ATTACK-(DEFENCE/2))
+                                print(f'[STATS] HP = {HP}❤ | ENEMY_HP = {ENEMY_HP}❤')
+                                print('') # space                                
+                                if HP <= 0 or ENEMY_HP <= 0:
+                                    # player dead sector
+                                    if HP <= 0:
+                                        print('💀You are dead💀')
+                                        while(True):
+                                            play_again = input('Do you want to play again?(yes/no): ')
+                                            if play_again.lower() == 'yes':
+                                                HP = 100
+                                                WAS_DEAD += 1
+                                                have_won += 1
+                                                break
+                                            elif play_again.lower() == 'no':
+                                                HP = 100
+                                                to_menu = 1
+                                                break
+                                    elif ENEMY_HP <= 0:
+                                        print(f'[✅] You have killed 💀{random_enemy}💀')
+                                        print(f'[✅] You earned 💸{MONEY_EARN} coins💸')               
+                                        coins += MONEY_EARN
+                                        score += 1
+                                        have_won = 1
+                                        break
+                            else:
+                                print(f'[❌] You dont have enough mana!')
+                        else:
+                             print(f'[❌] You dont know how to use this spell!')                                                                              
                     else:
-                        print(f'[💥]You missed the attack!')
-                        print(f'[💥]{random_enemy} attacked you for {ENEMY_ATTACK-(DEFENCE/2)}')
+                        print('') # space
+                        print(f'[💥] You missed the attack!')
+                        print(f'[💥] {random_enemy} attacked you for {ENEMY_ATTACK-(DEFENCE/2)}')
                         HP = HP - (ENEMY_ATTACK-(DEFENCE/2))
                         print(f'[STATS] HP = ❤ {HP} | ENEMY_HP = ❤ {ENEMY_HP}')
+                        print('') # space
                         if HP <= 0 or ENEMY_HP <= 0:
                             if HP <= 0:
                                 print('💀You are dead💀')
                                 play_again = input('Do you want to play again?(yes/no): ')
                                 if play_again.lower() == 'yes':
                                     HP = 100
+                                    MANA = 10
                                     WAS_DEAD += 1
                                     have_won += 1
                                     break
                                 elif play_again.lower() == 'no':
                                     HP = 100
-                                    to_menu = 1
+                                    MANA = 10
+                                    IS_DEAD += 1
                                     break
             # shop sector  
             elif player_choice.lower() == 'shop':
-                print('[✅]Current position: Shop')
+                print('') # space
                 print('[🧙‍♂️] Welcome to my shop!')
-                print('[📑] To buy simply write index of item: Potion[price] - [index]')
+                print('[📑] To buy simply write index of item: Item[price] - [index]')
                 print('[📑] To exit simply press enter.')
-                print('[ITEMS]: Potion[10] - [1]')
+                print('[ITEMS]: Potion[10] - [1] | Mana Potion[15] - [2] | Fireball Scroll[100] - [3]')
+                print(f'[💸] Your balance is: {coins} coins.')
+                print('') # space
+                print('[✅]Current position: Shop')
                 while(True):
-                    shop_buy = input('[💎SHOP💎]>> ')
+                    shop_buy = input('[💸]>> ')
                     if shop_buy.lower() == '1':
                         if coins >= 10:
                             coins -= 10
@@ -198,13 +290,73 @@ while NEW_GAME == True:
                         else:
                             print('[🧙‍♂️] You dont have enough coins.')
                             print(f'Current balance is: {coins}')
+                    elif shop_buy.lower() == '2':
+                        if coins >= 15:
+                            coins -= 15
+                            mana_potions += 1
+                            print('[✅] You have bought a one mana potion!')
+                            print(f'Current balance is: {coins}')
+                        else:
+                            print('[🧙‍♂️] You dont have enough coins.')
+                            print(f'Current balance is: {coins}')
+                    elif shop_buy == '3':
+                        if coins >= 100:
+                            coins -= 100
+                            fireball_scroll = True
+                            print('[✅] You have bought a fireball scroll!')
+                            print('[📑] You can use this in fight by typing "fireball"')
+                            print(f'Current balance is: {coins}')
+                        elif fireball_scroll == True:
+                            print('[❌] You have already bought fireball scroll!')
+                        else:
+                            print('[🧙‍♂️] You dont have enough coins.')  
+                            print(f'Current balance is: {coins}')                          
                     elif shop_buy == '':
                         print('[✅] You have left the shop.')
                         break
             # block potion usage
             elif player_choice.lower() == 'potion':
                 print('[❌] You only can use potion while you are fighting!')
+            elif player_choice.lower() == 'mana':
+                print('[❌] You only can use mana potion while you are fighting!')
+            # player statistics
+            elif player_choice.lower() == 'stats':
+                print('') # space
+                print(f'{player_name} stats:')
+                print(f'[❤ ] HP - {HP}')
+                print(f'[🪓] ATTACK - {ATTACK}')
+                print(f'[🛡 ] DEFENCE - {DEFENCE}')
+                print(f'[💸] COINS - {coins}')
+                print(f'[💥] KILLED ENEMIES - {score}')
+                print('') # space
+                print(f'{player_name} backpack:')
+                if potions > 1:
+                    print(f'[🧪] Health Potions - {potions}')
+                if mana_potions > 1:
+                    print(f'[🧪] Mana Potions - {mana_potions}')
+                if fireball_scroll == True:
+                    print(f'[📜] Fireball Scroll')
+                print('') # space
             else:
                 print('[❌] Please write correct command.')
 # # # # # # #
             
+while MENU == True:
+    for x in menu_choices.keys():
+        print(f'{x} -- {menu_choices[x]}')
+    MENU = False
+    while(True):
+        try:
+            user_choice = input()
+        except ValueError:
+            print('[❌] Please write correct number.')
+        if user_choice == '1':
+            NEW_GAME = True
+            break
+        elif user_choice == '2':
+            CREDITS = True
+            break
+        elif user_choice == '3':
+            exit()
+        else:
+            print('[❌] Please write correct number.')
