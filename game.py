@@ -61,8 +61,8 @@ while MENU == True:
 while CREDITS == True:
     CREDITS = False
     print('[📑] The game have been made by tomals0n')
-    print('[📑] Latest update: 29.11.2022 | ver: 0.1a')
-    print('[✅] Recent update: Spell - "Fireball"')
+    print('[📑] Latest update: 5.12.2022 | ver: 0.1a')
+    print('[✅] Recent update: New Item - Golden Sword')
     print('[✅] To start new game - write yes, to exit write no.')
     while(True):
         wanna_newgame = input('>> ')
@@ -86,6 +86,7 @@ while NEW_GAME == True:
         mana_potions = 0
         HP = 100
         fireball_scroll = None
+        golden_sword = None
         print('Welcome to RPG Game...')
         player_name = input('Please enter your name here: ')
         print(f'[❓] Hi, {player_name} welcome.')
@@ -102,6 +103,7 @@ while NEW_GAME == True:
                 potions = 0
                 mana_potions = 0
                 fireball_scroll = None
+                golden_sword = None
             # break loop to menu
             if IS_DEAD == 1:
                 MENU = True
@@ -111,6 +113,12 @@ while NEW_GAME == True:
             print('[✅]Current position: Outside')    
             player_choice = input('[🤴]>> ')
             random_enemy = random.choice(enemy_list)
+            
+            # load default player stats
+            ATTACK = 20
+            #print(f'[DEBUG] YOU HAVE {ATTACK} ATTACK')
+            
+            
             
             # enemies stats
             if random_enemy == 'Skeleton':
@@ -131,11 +139,16 @@ while NEW_GAME == True:
                 ENEMY_HP = 50
                 ENEMY_ATTACK = 8
                 ENEMY_DEFENCE = 8
-                MONEY_EARN = 9   
+                MONEY_EARN = 9
+               
             
             # # # # # #
             # game            
             if player_choice.lower() == 'forward':
+                # check if player have golden sword
+                if golden_sword == True:
+                    ATTACK += 10
+                    #print(f'[DEBUG] YOU HAVE {ATTACK} ATTACK')
                 score += 1
                 print('') # space
                 print('[✅] You went forward...')
@@ -275,7 +288,7 @@ while NEW_GAME == True:
                 print('[🧙‍♂️] Welcome to my shop!')
                 print('[📑] To buy simply write index of item: Item[price] - [index]')
                 print('[📑] To exit simply press enter.')
-                print('[ITEMS]: Potion[10] - [1] | Mana Potion[15] - [2] | Fireball Scroll[100] - [3]')
+                print('[ITEMS]: Potion[10] - [1] | Mana Potion[15] - [2] | Fireball Scroll[100] - [3] | Golden Sword[150] - [4]')
                 print(f'[💸] Your balance is: {coins} coins.')
                 print('') # space
                 print('[✅]Current position: Shop')
@@ -310,7 +323,19 @@ while NEW_GAME == True:
                             print('[❌] You have already bought fireball scroll!')
                         else:
                             print('[🧙‍♂️] You dont have enough coins.')  
-                            print(f'Current balance is: {coins}')                          
+                            print(f'Current balance is: {coins}')
+                    elif shop_buy == '4':
+                        if coins >= 150:
+                            coins -= 150
+                            golden_sword = True
+                            print('[✅] You have bought a Golden Sword!')
+                            print(f'[📑] Your attack raised up by 10 points, now you have {ATTACK+10} attack points.')
+                            print(f'Current balance is: {coins}')
+                        elif golden_sword == True:
+                            print('[❌] You have already bought Golden Sword!')
+                        else:
+                            print('[🧙‍♂️] You dont have enough coins.')  
+                            print(f'Current balance is: {coins}')                                                                                      
                     elif shop_buy == '':
                         print('[✅] You have left the shop.')
                         break
@@ -330,6 +355,8 @@ while NEW_GAME == True:
                 print(f'[💥] KILLED ENEMIES - {score}')
                 print('') # space
                 print(f'{player_name} backpack:')
+                if golden_sword == True:
+                    print('[🗡] Golden Sword')
                 if potions > 1:
                     print(f'[🧪] Health Potions - {potions}')
                 if mana_potions > 1:
