@@ -1,3 +1,8 @@
-# rpg_txtgame
+# Python rpg text game
 
-Created this to learn more about loops, breaking them - maybe one day I will implement this with GUI. 
+Contains:
+- shopping
+- potions
+- fireball spell
+- enemies
+- endless money farming
