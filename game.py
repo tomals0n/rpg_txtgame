@@ -294,7 +294,7 @@ while NEW_GAME == True:
                 print('[✅]Current position: Shop')
                 while(True):
                     shop_buy = input('[💸]>> ')
-                    if shop_buy.lower() == '1':
+                    if shop_buy == '1':
                         if coins >= 10:
                             coins -= 10
                             potions += 1
@@ -303,7 +303,7 @@ while NEW_GAME == True:
                         else:
                             print('[🧙‍♂️] You dont have enough coins.')
                             print(f'Current balance is: {coins}')
-                    elif shop_buy.lower() == '2':
+                    elif shop_buy == '2':
                         if coins >= 15:
                             coins -= 15
                             mana_potions += 1
