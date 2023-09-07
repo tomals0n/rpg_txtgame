@@ -1,5 +1,5 @@
 # Python rpg text game
-
+## Disclaimer, it is veeery basic
 Contains:
 - shopping
 - potions
